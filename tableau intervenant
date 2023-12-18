@@ -1,0 +1,65 @@
+let personnes = [
+  "MOUTAT Audrey",
+  "MORA Frédéric",
+  "ADAMCZYK Natacha",
+  "GUEDIRA Réda",
+  "LAVEFVE Valérie",
+  "SPRINGINSFELD Denis",
+  "CRESPIN Benoit",
+  "ADAM Fabrice",
+  "AYMARD Adrien",
+  "AYMARD Alain",
+  "BABIN Valentin",
+  "BONNAUD Lucile",
+  "BERTHIER Hélène",
+  "CHANTELOUP Amelin",
+  "CREDEVILLE Maxime",
+  "CHUPIN Suzanne",
+  "DAL BELLO Marine",
+  "DEMAISON Guillaume",
+  "DULAC Benoit",
+  "DUBREUIL Anne-Sophie",
+  "FEYDI Philippe",
+  "FIAMMETTI Deborah",
+  "FLITTI Eric",
+  "GERAUD Fabien",
+  "GOUDARD Bérénice",
+  "GRASSET Véronique",
+  "JARDOU Thomas",
+  "JAUFFRET Manon",
+  "JOUY Maxime",
+  "LAFONT Mathieu",
+  "LASCAUD Raphaël",
+  "LAZARE Jean-Cédric",
+  "LE BAIL Emma",
+  "LECOMTE Catherine",
+  "MARTY Thomas",
+  "MONDOLLOT Rémi",
+  "MINIER Jules",
+  "NENIN Cédric",
+  "PAILLIER Stéphane",
+  "PINAUD Anaïs",
+  "PORRO Heinich",
+  "PORTAL Nicolas",
+  "SABOURIN Erwan",
+  "SINCLAIR Diego",
+  "THARAUD Sébastien",
+  "TZVETKOVA Maria",
+  "TURBELIN Pierre",
+  "VALETTE Sophie",
+  "LU Inès",
+  "KABAB Simon",
+  "VEILLON Pascal",
+];
+let all = M.getallevents();
+let test = [];
+let data = [];
+for(let intervenant of personnes){
+  for(let event of all){
+    if(event.title.includes(intervenant)){
+      test.push(event);
+    }
+  }
+  console.log(test);
+  test = [];
+}
