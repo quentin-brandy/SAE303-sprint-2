@@ -1,0 +1,38 @@
+let all = MmiAll;
+let test = {};
+let calcCM, calcTD, calcTP, calcOther, calcTotal; 
+for(let intervenant of personnes){
+  test[intervenant] = all.filter( (event) => {return event.title.includes(intervenant) })
+
+  for (const event of test[intervenant]) {
+    
+    if (event.type == "CM") {
+      calcCM = hourEnd(event) - hourStart(event);
+      calcCM += calcCM;
+      calcTotal = calcTotal + calcCM;
+    }
+    else if (event.type == "TD") {
+      calcTD = hourEnd(event) - hourStart(event);
+      calcTD += calcTD;
+      calcTotal = calcTotal + calcTD;
+    }
+    else if (event.type == "TP") {
+      calcTP = hourEnd(event) - hourStart(event);
+      calcTP += calcTP;
+      calcTotal = calcTotal + calcTP;
+    }
+    else {
+      calcOther = hourEnd(event) - hourStart(event);
+      calcOther += calcOther;
+      calcTotal = calcTotal + calcOther;
+    }
+  }
+  console.log("Heure Total :"+calcTotal+"h, CM : "+calcCM+"h, TD : "+calcTD+"h, TP : "+calcTP+"h, et autre : "+calcOther+"h");
+  console.log(test);
+  test = [];
+  calcTotal = 0;
+  calcCM = 0;
+  calcTD = 0;
+  calcTP = 0;
+  calcOther = 0;
+}
