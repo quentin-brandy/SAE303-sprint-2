@@ -51,24 +51,200 @@ let personnes = [
   "KABAB Simon",
   "VEILLON Pascal",
 ];
-let all = M.getallevents();
-let test = [];
-let data = [];
-for(let intervenant of personnes){
-  for(let event of all){
-    if(event.title.includes(intervenant)){
-      test.push(event);
-    }
-  }
-  console.log(test);
-  test = [];
-}
-
 
 let all = M.getallevents();
 let test = {};
+ var data = [];
+let calcCM, calcTD, calcTP, calcOther, calcTotal;
+
 for(let intervenant of personnes){
   test[intervenant] = all.filter( (event) => {return event.title.includes(intervenant) })
-}
-console.log(test);
 
+  for (const event of test[intervenant]) {
+    
+    if (event.type == "CM") {
+      calcCM += hourEnd(event) - hourStart(event);
+    }
+    else if (event.type == "TD") {
+      calcTD += hourEnd(event) - hourStart(event);
+    }
+    else if (event.type == "TP") {
+      calcTP += hourEnd(event) - hourStart(event);
+    }
+    else {
+      calcOther += hourEnd(event) - hourStart(event);
+    }
+
+    calcTotal = calcCM + calcTD + calcTP + calcOther;
+  }
+  let a = {
+      "intervenant": intervenant,
+      "CM": calcCM,
+      "TD": calcTD,
+      "TP": calcTP,
+  };
+  data.push(a);
+  console.log(a);
+  test = [];
+  calcTotal = 0;
+  calcCM = 0;
+  calcTD = 0;
+  calcTP = 0;
+  calcOther = 0;
+}
+
+
+function hourStart(para) {
+  let heure = para.start.toString();
+  let test = heure.slice(16, -42);
+  test = test.replaceAll(":", ".");
+  test = test.replaceAll("30", "50");
+  test = parseFloat(test);
+  return test;
+}
+function hourEnd(para) {
+  let heure = para.end.toString();
+  let test = heure.slice(16, -42);
+  test = test.replaceAll(":", ".");
+  test = test.replaceAll("30", "50");
+  test = parseFloat(test);
+  return test;
+}
+
+
+/*let nbcours = {};
+for(let intervenant of personnes){
+  nbcours[intervenant] = test[intervenant].length;
+}
+console.log(nbcours);*/
+
+
+
+am5.ready(function() {
+
+
+  // Create root element
+  // https://www.amcharts.com/docs/v5/getting-started/#Root_element
+  var root = am5.Root.new("chartdiv");
+  
+  
+  var myTheme = am5.Theme.new(root);
+  
+  myTheme.rule("Grid", ["base"]).setAll({
+    strokeOpacity: 0.1
+  });
+  
+  
+  // Set themes
+  // https://www.amcharts.com/docs/v5/concepts/themes/
+  root.setThemes([
+    am5themes_Animated.new(root),
+    myTheme
+  ]);
+  
+  
+  // Create chart
+  // https://www.amcharts.com/docs/v5/charts/xy-chart/
+  var chart = root.container.children.push(am5xy.XYChart.new(root, {
+    panX: false,
+    panY: false,
+    wheelX: "panY",
+    wheelY: "zoomY",
+    paddingLeft: 0,
+    layout: root.verticalLayout
+  }));
+  
+  // Add scrollbar
+  // https://www.amcharts.com/docs/v5/charts/xy-chart/scrollbars/
+  chart.set("scrollbarY", am5.Scrollbar.new(root, {
+    orientation: "vertical"
+  }));
+  
+  
+  
+  
+  // Create axes
+  // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+  var yRenderer = am5xy.AxisRendererY.new(root, {});
+  var yAxis = chart.yAxes.push(am5xy.CategoryAxis.new(root, {
+    categoryField: "intervenant",
+    renderer: yRenderer,
+    tooltip: am5.Tooltip.new(root, {})
+  }));
+  
+  yRenderer.grid.template.setAll({
+    location: 1
+  })
+  
+  yAxis.data.setAll(data);
+  
+  var xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
+    min: 0,
+    maxPrecision: 0,
+    renderer: am5xy.AxisRendererX.new(root, {
+      minGridDistance: 40,
+      strokeOpacity: 0.1
+    })
+  }));
+  
+  // Add legend
+  // https://www.amcharts.com/docs/v5/charts/xy-chart/legend-xy-series/
+  var legend = chart.children.push(am5.Legend.new(root, {
+    centerX: am5.p50,
+    x: am5.p50
+  }));
+  
+  
+  // Add series
+  // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+  function makeSeries(name, fieldName) {
+    var series = chart.series.push(am5xy.ColumnSeries.new(root, {
+      name: name,
+      stacked: true,
+      xAxis: xAxis,
+      yAxis: yAxis,
+      baseAxis: yAxis,
+      valueXField: fieldName,
+      categoryYField: "intervenant"
+    }));
+  
+    series.columns.template.setAll({
+      tooltipText: "{name}, {categoryY}: {valueX}",
+      tooltipY: am5.percent(10)
+    });
+    series.data.setAll(data);
+  
+    // Make stuff animate on load
+    // https://www.amcharts.com/docs/v5/concepts/animations/
+    series.appear();
+  
+
+   
+
+    series.bullets.push(function () {
+      return am5.Bullet.new(root, {
+        sprite: am5.Label.new(root, {
+          text: "{valueX}",
+          fill: root.interfaceColors.get("alternativeText"),
+          centerY: am5.p50,
+          centerX: am5.p50,
+          populateText: true
+        })
+      });
+    });
+  
+    legend.data.push(series);
+  }
+  
+  makeSeries("CM", "CM");
+  makeSeries("TD", "TD");
+  makeSeries("TP", "TP");
+  
+  // Make stuff animate on load
+  // https://www.amcharts.com/docs/v5/concepts/animations/
+  chart.appear(1000, 100);
+  
+  }); // end am5.ready()
+
+  
+  
