@@ -1,0 +1,23 @@
+//Permettant de récupérer les heures de chaques cours
+
+for (const elt of MmiAll) {
+  let calc = hourEnd(elt) - hourStart(elt);
+  console.log(calc+"h");
+}
+
+function hourStart(para) {
+  let heure = para.start.toString();
+  let test = heure.slice(16, -42);
+  test = test.replaceAll(":", ".");
+  test = test.replaceAll("30", "50");
+  test = parseFloat(test);
+  return test;
+}
+function hourEnd(para) {
+  let heure = para.end.toString();
+  let test = heure.slice(16, -42);
+  test = test.replaceAll(":", ".");
+  test = test.replaceAll("30", "50");
+  test = parseFloat(test);
+  return test;
+}
