@@ -7,25 +7,19 @@ for(let intervenant of personnes){
   for (const event of test[intervenant]) {
     
     if (event.type == "CM") {
-      calcCM = hourEnd(event) - hourStart(event);
-      calcCM += calcCM;
-      calcTotal = calcTotal + calcCM;
+      calcCM += hourEnd(event) - hourStart(event);
     }
     else if (event.type == "TD") {
-      calcTD = hourEnd(event) - hourStart(event);
-      calcTD += calcTD;
-      calcTotal = calcTotal + calcTD;
+      calcTD += hourEnd(event) - hourStart(event);
     }
     else if (event.type == "TP") {
-      calcTP = hourEnd(event) - hourStart(event);
-      calcTP += calcTP;
-      calcTotal = calcTotal + calcTP;
+      calcTP += hourEnd(event) - hourStart(event);
     }
     else {
-      calcOther = hourEnd(event) - hourStart(event);
-      calcOther += calcOther;
-      calcTotal = calcTotal + calcOther;
+      calcOther += hourEnd(event) - hourStart(event);
     }
+
+    calcTotal = calcCM + calcTD + calcTP + calcOther;
   }
   console.log("Heure Total :"+calcTotal+"h, CM : "+calcCM+"h, TD : "+calcTD+"h, TP : "+calcTP+"h, et autre : "+calcOther+"h");
   console.log(test);
