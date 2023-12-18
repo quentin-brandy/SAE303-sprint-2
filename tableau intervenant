@@ -63,3 +63,12 @@ for(let intervenant of personnes){
   console.log(test);
   test = [];
 }
+
+
+let all = M.getallevents();
+let test = {};
+for(let intervenant of personnes){
+  test[intervenant] = all.filter( (event) => {return event.title.includes(intervenant) })
+}
+console.log(test);
+
