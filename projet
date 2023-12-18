@@ -1,6 +1,7 @@
 let all = MmiAll;
 let test = {};
-let calcCM, calcTD, calcTP, calcOther, calcTotal; 
+let calcCM, calcTD, calcTP, calcOther, calcTotal;
+
 for(let intervenant of personnes){
   test[intervenant] = all.filter( (event) => {return event.title.includes(intervenant) })
 
@@ -29,4 +30,22 @@ for(let intervenant of personnes){
   calcTD = 0;
   calcTP = 0;
   calcOther = 0;
+}
+
+
+function hourStart(para) {
+  let heure = para.start.toString();
+  let test = heure.slice(16, -42);
+  test = test.replaceAll(":", ".");
+  test = test.replaceAll("30", "50");
+  test = parseFloat(test);
+  return test;
+}
+function hourEnd(para) {
+  let heure = para.end.toString();
+  let test = heure.slice(16, -42);
+  test = test.replaceAll(":", ".");
+  test = test.replaceAll("30", "50");
+  test = parseFloat(test);
+  return test;
 }
