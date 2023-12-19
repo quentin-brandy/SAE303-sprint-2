@@ -10,6 +10,7 @@ class Event {
     #groups;
     #type;
     #semestre;
+    #ressource;
 
     constructor(id, summary, description, start, end, location) {
         this.#id = id;
@@ -23,6 +24,13 @@ class Event {
         this.#groups = this.#groups.split('.');
         this.#groups = this.#groups.map( gr => gr.replace(/\s/g, "") );
 
+
+        this.#semestre = summary.match(/[1-6]/);
+
+
+        this.#ressource = summary.match(/^(R|(SA))[EÉ ]{0,2}[1-6](\.Crea)?(\.DWeb-DI)?\.[0-9]{2}/);
+
+
         if (this.#summary.includes("CM")) {
             this.#type = "CM";
         } else if (this.#summary.includes("TD")) {
@@ -32,8 +40,6 @@ class Event {
         } else {
             this.#type = "OTHER";
         }
-        let regex = /[0-6]/;
-        this.#semestre = summary.match(regex);
      
     }
 
@@ -77,7 +83,8 @@ class Event {
             location: this.#location,
             type: this.#type,
             groups: this.#groups,
-            semestre: this.#semestre
+            semestre: this.#semestre,
+            ressource: this.#ressource,
         }
     }
 }

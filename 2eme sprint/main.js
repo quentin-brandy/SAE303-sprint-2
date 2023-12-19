@@ -38,11 +38,6 @@ let Mmi3 = [];
 
 
 
-
-
-
-
-
 let personnes = [
   "MOUTAT Audrey",
   "MORA Frédéric",
@@ -97,10 +92,18 @@ let personnes = [
   "VEILLON Pascal",
 ];
 
-V.init = function () {
+let semes = [
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+];
+
+/* V.init = function () {
   let semestre = document.querySelector("#semestre");
   semestre.addEventListener("change", handlersemestre)
-}
+} */
 
 
 
@@ -148,6 +151,116 @@ for (let intervenant of personnes) {
 }
 
 
+/* let ressource = {
+  "intervenant": "test",
+  "Semestre": {
+    "1": {
+      "R9.08": {
+        "CM": "test",
+        "TP": "test",
+        "TS": "test",
+      },
+      "R08": {
+        "CM": "test",
+        "TP": "test",
+        "TS": "test",
+      },
+      "R908": {
+        "CM": "test",
+        "TP": "test",
+        "TS": "test",
+      },
+    },
+    "2": {
+      "R9.08": {
+        "CM": "test",
+        "TP": "test",
+        "TS": "test",
+      },
+      "R08": {
+        "CM": "test",
+        "TP": "test",
+        "TS": "test",
+      },
+      "R908": {
+        "CM": "test",
+        "TP": "test",
+        "TS": "test",
+      },
+    },
+    "3": {
+      "R9.08": {
+        "CM": "test",
+        "TP": "test",
+        "TS": "test",
+      },
+      "R08": {
+        "CM": "test",
+        "TP": "test",
+        "TS": "test",
+      },
+      "R908": {
+        "CM": "test",
+        "TP": "test",
+        "TS": "test",
+      },
+    },
+  },
+}; */
+
+let ressourceInter = [];
+let sem1, sem2, sem3, sem4, sem5, sem6;
+
+for (let intervenant of personnes) {
+  test[intervenant] = all.filter((event) => { return event.title.includes(intervenant) })
+
+  for (const event of test[intervenant]) {
+
+    if (event.type == "CM") {
+      calcCM += hourEnd(event) - hourStart(event);
+    }
+    else if (event.type == "TD") {
+      calcTD += hourEnd(event) - hourStart(event);
+    }
+    else if (event.type == "TP") {
+      calcTP += hourEnd(event) - hourStart(event);
+    }
+    else {
+      calcOther += hourEnd(event) - hourStart(event);
+    }
+
+    calcTotal = calcCM + calcTD + calcTP + calcOther;
+
+    sem1 = test[intervenant].filter((ev) => {
+      // Utilisez la condition pour filtrer les éléments
+      return ev.semestre.includes("1");
+    }).map((ev) => {
+      // Retournez la propriété souhaitée (ev.ressource)
+      return ev.ressource;
+    });
+    sem2 = test[intervenant].filter((ev) => { return ev.semestre.includes("2") })
+    sem3 = test[intervenant].filter((ev) => { return ev.semestre.includes("3") })
+    sem4 = test[intervenant].filter((ev) => { return ev.semestre.includes("4") })
+    sem5 = test[intervenant].filter((ev) => { return ev.semestre.includes("5") })
+    sem6 = test[intervenant].filter((ev) => { return ev.semestre.includes("6") })
+
+  }
+  let a = {
+    "intervenant": intervenant,
+
+    "Semestre": {
+      sem1,
+      sem2,
+      sem3,
+      sem4,
+      sem5,
+      sem6,
+    }
+  };
+  console.log(a);
+}
+console.log(sem1);
+
 
 
 
@@ -174,7 +287,7 @@ function hourEnd(para) {
 
 
 
- am5.ready(function () {
+am5.ready(function () {
 
 
   // Create root element
@@ -207,7 +320,7 @@ function hourEnd(para) {
     paddingLeft: 0,
     layout: root.verticalLayout,
   }));
-  
+
   /*chart.plotContainer.get("background").setAll({
     stroke: am5.color(0x297373),
     strokeOpacity: 0.5,                               modificateur de couleur background
@@ -237,10 +350,10 @@ function hourEnd(para) {
   yRenderer.grid.template.setAll({
     location: 1
   })
- 
+
   yAxis.data.setAll(data);
 
-  
+
   var xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
     min: 0,
     maxPrecision: 0,
@@ -276,7 +389,7 @@ function hourEnd(para) {
       tooltipY: am5.percent(10)
     });
     series.data.setAll(data);
-    let affichageserie = function(data){
+    let affichageserie = function (data) {
       series.data.setAll(data);
     };
     // Make stuff animate on load
@@ -284,7 +397,7 @@ function hourEnd(para) {
 
 
     let semestre = document.querySelector("#semestre");
-  
+
     let handlersemestre = function (ev) {
       let all = MmiAll;
       let test = {};
@@ -296,11 +409,11 @@ function hourEnd(para) {
         calcTP = 0;
         calcOther = 0;
         test[intervenant] = all.filter((event) => { return event.title.includes(intervenant) })
-    
+
         for (const event of test[intervenant]) {
           if (ev.target.value === event.semestre[0]) {
-        
-    
+
+
             if (event.type == "CM") {
               calcCM += hourEnd(event) - hourStart(event);
             }
@@ -313,7 +426,7 @@ function hourEnd(para) {
             else {
               calcOther += hourEnd(event) - hourStart(event);
             }
-    
+
             calcTotal = calcCM + calcTD + calcTP + calcOther;
           }
         }
@@ -324,9 +437,9 @@ function hourEnd(para) {
           "TP": calcTP,
         };
         data2.push(a);
-    
+
       }
-     
+
       affichageserie(data2);
       data2 = [];
     }
@@ -357,7 +470,7 @@ function hourEnd(para) {
   // Make stuff animate on load
   // https://www.amcharts.com/docs/v5/concepts/animations/
   chart.appear(1000, 100);
- 
+
 }); // end am5.ready()
 
 
@@ -367,5 +480,5 @@ let data2 = [];
 
 
 
-C.init();
-V.init();
+/* C.init();
+V.init(); */
