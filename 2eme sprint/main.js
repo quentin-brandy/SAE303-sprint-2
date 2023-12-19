@@ -153,47 +153,6 @@ for(let intervenant of personnes){
 
 
 
-C.handlersemestre = function(ev){
-  let valeursTest = Object.values(test);
-  console.log(ev.target.value);
-  calcTotal = 0;
-  calcCM = 0;
-  calcTD = 0;
-  calcTP = 0;
-  calcOther = 0;
-  for (let valeur of valeursTest) {
-    console.log(valeur);
-var data = [];
-let calcCM, calcTD, calcTP, calcOther, calcTotal;
-   for (const event of valeur) {
-    if(ev.target.value === event.semestre[0]){
-    if (event.type == "CM") {
-      calcCM += hourEnd(event) - hourStart(event);
-    }
-    else if (event.type == "TD") {
-      calcTD += hourEnd(event) - hourStart(event);
-    }
-    else if (event.type == "TP") {
-      calcTP += hourEnd(event) - hourStart(event);
-    }
-    else {
-      calcOther += hourEnd(event) - hourStart(event);
-    }
-
-    calcTotal = calcCM + calcTD + calcTP + calcOther;
-  }
-  let a = {
-      "intervenant": event.title,
-      "CM": calcCM,
-      "TD": calcTD,
-      "TP": calcTP,
-  };
-  data.push(a);
-
-}
-console.log(data);
-}
-}
 
 
 
@@ -348,5 +307,61 @@ am5.ready(function() {
   chart.appear(1000, 100);
   
   }); // end am5.ready()
+
+
+
+
+
+  C.handlersemestre = function(ev){
+    let all = MmiAll;
+  var data = [];
+  let test = {};
+  let calcCM, calcTD, calcTP, calcOther, calcTotal;
+  for(let intervenant of personnes){
+    calcTotal = 0;
+    calcCM = 0;
+    calcTD = 0;
+    calcTP = 0;
+    calcOther = 0;
+    test[intervenant] = all.filter( (event) => {return event.title.includes(intervenant) })
+    
+    for (const event of test[intervenant]) {
+      if(ev.target.value === event.semestre[0]){
+      if (event.type == "CM") {
+        calcCM += hourEnd(event) - hourStart(event);
+      }
+      else if (event.type == "TD") {
+        calcTD += hourEnd(event) - hourStart(event);
+      }
+      else if (event.type == "TP") {
+        calcTP += hourEnd(event) - hourStart(event);
+      }
+      else {
+        calcOther += hourEnd(event) - hourStart(event);
+      }
+  
+      calcTotal = calcCM + calcTD + calcTP + calcOther;
+    }
+  }
+    let a = {
+        "intervenant": intervenant,
+        "CM": calcCM,
+        "TD": calcTD,
+        "TP": calcTP,
+    };
+    data.push(a);
+  
+  }
+  console.log(data);
+  return data;
+  }
+
+
+
+
+
+
+
+
   C.init();
   V.init();
