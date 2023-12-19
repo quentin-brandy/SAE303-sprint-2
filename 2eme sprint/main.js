@@ -97,15 +97,15 @@ let personnes = [
   "VEILLON Pascal",
 ];
 
-V.init = function(){
+V.init = function () {
   let semestre = document.querySelector("#semestre");
-  semestre.addEventListener("change" , C.handlersemestre)
+  semestre.addEventListener("change", C.handlersemestre)
 }
 
 
 
 let C = {};
-C.init = function(){
+C.init = function () {
 
 }
 
@@ -113,16 +113,16 @@ let all = MmiAll;
 var data = [];
 let test = {};
 let calcCM, calcTD, calcTP, calcOther, calcTotal;
-for(let intervenant of personnes){
+for (let intervenant of personnes) {
   calcTotal = 0;
   calcCM = 0;
   calcTD = 0;
   calcTP = 0;
   calcOther = 0;
-  test[intervenant] = all.filter( (event) => {return event.title.includes(intervenant) })
-  
+  test[intervenant] = all.filter((event) => { return event.title.includes(intervenant) })
+
   for (const event of test[intervenant]) {
-    
+
     if (event.type == "CM") {
       calcCM += hourEnd(event) - hourStart(event);
     }
@@ -139,15 +139,12 @@ for(let intervenant of personnes){
     calcTotal = calcCM + calcTD + calcTP + calcOther;
   }
   let a = {
-      "intervenant": intervenant,
-      "CM": calcCM,
-      "TD": calcTD,
-      "TP": calcTP,
+    "intervenant": intervenant,
+    "CM": calcCM,
+    "TD": calcTD,
+    "TP": calcTP,
   };
   data.push(a);
-  
-
-
 }
 
 
@@ -174,37 +171,82 @@ function hourEnd(para) {
 }
 
 
-/*let nbcours = {};
-for(let intervenant of personnes){
-  nbcours[intervenant] = test[intervenant].length;
+
+
+var data = [];
+
+C.handlersemestre = function (ev) {
+  let divTable = document.querySelector('#chartdiv');
+  let all = MmiAll;
+  let test = {};
+  let calcCM, calcTD, calcTP, calcOther, calcTotal;
+  var data = [];
+  for (let intervenant of personnes) {
+    calcTotal = 0;
+    calcCM = 0;
+    calcTD = 0;
+    calcTP = 0;
+    calcOther = 0;
+    test[intervenant] = all.filter((event) => { return event.title.includes(intervenant) })
+
+    for (const event of test[intervenant]) {
+      if (ev.target.value === event.semestre[0]) {
+        divTable.innerHTML = "";
+
+        if (event.type == "CM") {
+          calcCM += hourEnd(event) - hourStart(event);
+        }
+        else if (event.type == "TD") {
+          calcTD += hourEnd(event) - hourStart(event);
+        }
+        else if (event.type == "TP") {
+          calcTP += hourEnd(event) - hourStart(event);
+        }
+        else {
+          calcOther += hourEnd(event) - hourStart(event);
+        }
+
+        calcTotal = calcCM + calcTD + calcTP + calcOther;
+      }
+    }
+    let a = {
+      "intervenant": intervenant,
+      "CM": calcCM,
+      "TD": calcTD,
+      "TP": calcTP,
+    };
+    data.push(a);
+
+  }
+  console.log(data);
+  return data;
 }
-console.log(nbcours);*/
 
 
 
-am5.ready(function() {
+am5.ready(function () {
 
 
   // Create root element
   // https://www.amcharts.com/docs/v5/getting-started/#Root_element
   var root = am5.Root.new("chartdiv");
-  
-  
+
+
   var myTheme = am5.Theme.new(root);
-  
+
   myTheme.rule("Grid", ["base"]).setAll({
     strokeOpacity: 0.1
   });
-  
-  
+
+
   // Set themes
   // https://www.amcharts.com/docs/v5/concepts/themes/
   root.setThemes([
     am5themes_Animated.new(root),
     myTheme
   ]);
-  
-  
+
+
   // Create chart
   // https://www.amcharts.com/docs/v5/charts/xy-chart/
   var chart = root.container.children.push(am5xy.XYChart.new(root, {
@@ -215,16 +257,16 @@ am5.ready(function() {
     paddingLeft: 0,
     layout: root.verticalLayout
   }));
-  
+
   // Add scrollbar
   // https://www.amcharts.com/docs/v5/charts/xy-chart/scrollbars/
   chart.set("scrollbarY", am5.Scrollbar.new(root, {
     orientation: "vertical"
   }));
-  
-  
-  
-  
+
+
+
+
   // Create axes
   // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
   var yRenderer = am5xy.AxisRendererY.new(root, {});
@@ -233,13 +275,13 @@ am5.ready(function() {
     renderer: yRenderer,
     tooltip: am5.Tooltip.new(root, {})
   }));
-  
+
   yRenderer.grid.template.setAll({
     location: 1
   })
-  
+
   yAxis.data.setAll(data);
-  
+
   var xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
     min: 0,
     maxPrecision: 0,
@@ -248,15 +290,15 @@ am5.ready(function() {
       strokeOpacity: 0.1
     })
   }));
-  
+
   // Add legend
   // https://www.amcharts.com/docs/v5/charts/xy-chart/legend-xy-series/
   var legend = chart.children.push(am5.Legend.new(root, {
     centerX: am5.p50,
     x: am5.p50
   }));
-  
-  
+
+
   // Add series
   // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
   function makeSeries(name, fieldName) {
@@ -269,19 +311,19 @@ am5.ready(function() {
       valueXField: fieldName,
       categoryYField: "intervenant"
     }));
-  
+
     series.columns.template.setAll({
       tooltipText: "{name}, {categoryY}: {valueX}",
       tooltipY: am5.percent(10)
     });
     series.data.setAll(data);
-  
+
     // Make stuff animate on load
     // https://www.amcharts.com/docs/v5/concepts/animations/
     series.appear();
-  
 
-   
+
+
 
     series.bullets.push(function () {
       return am5.Bullet.new(root, {
@@ -294,74 +336,24 @@ am5.ready(function() {
         })
       });
     });
-  
+
     legend.data.push(series);
   }
-  
+
   makeSeries("CM", "CM");
   makeSeries("TD", "TD");
   makeSeries("TP", "TP");
-  
+
   // Make stuff animate on load
   // https://www.amcharts.com/docs/v5/concepts/animations/
   chart.appear(1000, 100);
-  
-  }); // end am5.ready()
 
-
-
-
-
-  C.handlersemestre = function(ev){
-    let all = MmiAll;
-  var data = [];
-  let test = {};
-  let calcCM, calcTD, calcTP, calcOther, calcTotal;
-  for(let intervenant of personnes){
-    calcTotal = 0;
-    calcCM = 0;
-    calcTD = 0;
-    calcTP = 0;
-    calcOther = 0;
-    test[intervenant] = all.filter( (event) => {return event.title.includes(intervenant) })
-    
-    for (const event of test[intervenant]) {
-      if(ev.target.value === event.semestre[0]){
-      if (event.type == "CM") {
-        calcCM += hourEnd(event) - hourStart(event);
-      }
-      else if (event.type == "TD") {
-        calcTD += hourEnd(event) - hourStart(event);
-      }
-      else if (event.type == "TP") {
-        calcTP += hourEnd(event) - hourStart(event);
-      }
-      else {
-        calcOther += hourEnd(event) - hourStart(event);
-      }
-  
-      calcTotal = calcCM + calcTD + calcTP + calcOther;
-    }
-  }
-    let a = {
-        "intervenant": intervenant,
-        "CM": calcCM,
-        "TD": calcTD,
-        "TP": calcTP,
-    };
-    data.push(a);
-  
-  }
-  console.log(data);
-  return data;
-  }
+}); // end am5.ready()
 
 
 
 
 
 
-
-
-  C.init();
-  V.init();
+C.init();
+V.init();
