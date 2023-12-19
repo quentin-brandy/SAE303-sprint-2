@@ -32,9 +32,9 @@ class Event {
         } else {
             this.#type = "OTHER";
         }
-
-        this.#semestre = summary.match(/R(\d+)/);
-        console.log(this.#semestre);
+        let regex = /[0-6]/;
+        this.#semestre = summary.match(regex);
+     
     }
 
     get id() {

@@ -1,4 +1,19 @@
+body{
+    background-color: whitesmoke;
+}
 #chartdiv {
     width: 100%;
     height: 100vh;
 }
+.select{
+    appearance: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    padding: 0 1em 0 0;
+    margin: 0;
+ 
+}
+
