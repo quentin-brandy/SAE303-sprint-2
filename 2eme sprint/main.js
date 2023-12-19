@@ -1,3 +1,48 @@
+import { M } from "./js/model.js";
+import { V } from "./js/view.js";
+
+/*
+   Ce fichier correspond au contrôleur de l'application. Il est chargé de faire le lien entre le modèle et la vue.
+   Le modèle et la vue sont définis dans les fichiers js/model.js et js/view.js et importés (M et V, parties "publiques") dans ce fichier.
+   Le modèle contient les données (les événements des 3 années de MMI).
+   La vue contient tout ce qui est propre à l'interface et en particulier le composant Toast UI Calendar.
+   Le principe sera toujours le même : le contrôleur va récupérer les données du modèle et les passer à la vue.
+   Toute opération de filtrage des données devra être définie dans le modèle.
+   Et en fonction des actions de l'utilisateur, le contrôleur pourra demander au modèle de lui retourner des données filtrées
+   pour ensuite les passer à la vue pour affichage.
+
+   Exception : Afficher 1, 2 ou les 3 années de formation sans autre filtrage peut être géré uniquement au niveau de la vue.
+   */
+
+
+// loadind data (and wait for it !)
+await M.init();
+
+
+// ~~~~IT 1~~~~
+
+let MmiAll = [...M.getEvents('mmi1'), ...M.getEvents('mmi2'), ...M.getEvents('mmi3')];
+
+
+
+// ~~~~IT 3~~~~
+
+for (const elt of MmiAll) {
+  elt.backgroundColor = V.colorMap[elt.calendarId][elt.type];
+}
+
+
+let Mmi1 = [];
+let Mmi2 = [];
+let Mmi3 = [];
+
+
+
+
+
+
+
+
 let personnes = [
   "MOUTAT Audrey",
   "MORA Frédéric",
@@ -52,14 +97,19 @@ let personnes = [
   "VEILLON Pascal",
 ];
 
-let all = M.getallevents();
+let all = MmiAll;
 let test = {};
  var data = [];
 let calcCM, calcTD, calcTP, calcOther, calcTotal;
 
 for(let intervenant of personnes){
+  calcTotal = 0;
+  calcCM = 0;
+  calcTD = 0;
+  calcTP = 0;
+  calcOther = 0;
   test[intervenant] = all.filter( (event) => {return event.title.includes(intervenant) })
-
+  
   for (const event of test[intervenant]) {
     
     if (event.type == "CM") {
@@ -84,13 +134,8 @@ for(let intervenant of personnes){
       "TP": calcTP,
   };
   data.push(a);
-  console.log(a);
+  console.log(MmiAll);
   test = [];
-  calcTotal = 0;
-  calcCM = 0;
-  calcTD = 0;
-  calcTP = 0;
-  calcOther = 0;
 }
 
 
@@ -245,6 +290,3 @@ am5.ready(function() {
   chart.appear(1000, 100);
   
   }); // end am5.ready()
-
-  
-  
