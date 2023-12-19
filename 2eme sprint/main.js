@@ -99,7 +99,7 @@ let personnes = [
 
 V.init = function () {
   let semestre = document.querySelector("#semestre");
-  semestre.addEventListener("change", C.handlersemestre)
+  semestre.addEventListener("change", handlersemestre)
 }
 
 
@@ -173,58 +173,8 @@ function hourEnd(para) {
 
 
 
-var data = [];
 
-C.handlersemestre = function (ev) {
-  let divTable = document.querySelector('#chartdiv');
-  let all = MmiAll;
-  let test = {};
-  let calcCM, calcTD, calcTP, calcOther, calcTotal;
-  var data = [];
-  for (let intervenant of personnes) {
-    calcTotal = 0;
-    calcCM = 0;
-    calcTD = 0;
-    calcTP = 0;
-    calcOther = 0;
-    test[intervenant] = all.filter((event) => { return event.title.includes(intervenant) })
-
-    for (const event of test[intervenant]) {
-      if (ev.target.value === event.semestre[0]) {
-        divTable.innerHTML = "";
-
-        if (event.type == "CM") {
-          calcCM += hourEnd(event) - hourStart(event);
-        }
-        else if (event.type == "TD") {
-          calcTD += hourEnd(event) - hourStart(event);
-        }
-        else if (event.type == "TP") {
-          calcTP += hourEnd(event) - hourStart(event);
-        }
-        else {
-          calcOther += hourEnd(event) - hourStart(event);
-        }
-
-        calcTotal = calcCM + calcTD + calcTP + calcOther;
-      }
-    }
-    let a = {
-      "intervenant": intervenant,
-      "CM": calcCM,
-      "TD": calcTD,
-      "TP": calcTP,
-    };
-    data.push(a);
-
-  }
-  console.log(data);
-  return data;
-}
-
-
-
-am5.ready(function () {
+ am5.ready(function () {
 
 
   // Create root element
@@ -255,8 +205,16 @@ am5.ready(function () {
     wheelX: "panY",
     wheelY: "zoomY",
     paddingLeft: 0,
-    layout: root.verticalLayout
+    layout: root.verticalLayout,
   }));
+  
+  /*chart.plotContainer.get("background").setAll({
+    stroke: am5.color(0x297373),
+    strokeOpacity: 0.5,                               modificateur de couleur background
+    fill: am5.color(0x297373),
+    fillOpacity: 0.2
+  });*/
+
 
   // Add scrollbar
   // https://www.amcharts.com/docs/v5/charts/xy-chart/scrollbars/
@@ -279,9 +237,10 @@ am5.ready(function () {
   yRenderer.grid.template.setAll({
     location: 1
   })
-
+ 
   yAxis.data.setAll(data);
 
+  
   var xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
     min: 0,
     maxPrecision: 0,
@@ -317,13 +276,64 @@ am5.ready(function () {
       tooltipY: am5.percent(10)
     });
     series.data.setAll(data);
-
+    let affichageserie = function(data){
+      series.data.setAll(data);
+    };
     // Make stuff animate on load
     // https://www.amcharts.com/docs/v5/concepts/animations/
+
+
+    let semestre = document.querySelector("#semestre");
+  
+    let handlersemestre = function (ev) {
+      let all = MmiAll;
+      let test = {};
+      let calcCM, calcTD, calcTP, calcOther, calcTotal;
+      for (let intervenant of personnes) {
+        calcTotal = 0;
+        calcCM = 0;
+        calcTD = 0;
+        calcTP = 0;
+        calcOther = 0;
+        test[intervenant] = all.filter((event) => { return event.title.includes(intervenant) })
+    
+        for (const event of test[intervenant]) {
+          if (ev.target.value === event.semestre[0]) {
+        
+    
+            if (event.type == "CM") {
+              calcCM += hourEnd(event) - hourStart(event);
+            }
+            else if (event.type == "TD") {
+              calcTD += hourEnd(event) - hourStart(event);
+            }
+            else if (event.type == "TP") {
+              calcTP += hourEnd(event) - hourStart(event);
+            }
+            else {
+              calcOther += hourEnd(event) - hourStart(event);
+            }
+    
+            calcTotal = calcCM + calcTD + calcTP + calcOther;
+          }
+        }
+        let a = {
+          "intervenant": intervenant,
+          "CM": calcCM,
+          "TD": calcTD,
+          "TP": calcTP,
+        };
+        data2.push(a);
+    
+      }
+     
+      affichageserie(data2);
+      data2 = [];
+    }
+    semestre.addEventListener("change", handlersemestre);
+
+
     series.appear();
-
-
-
 
     series.bullets.push(function () {
       return am5.Bullet.new(root, {
@@ -347,9 +357,11 @@ am5.ready(function () {
   // Make stuff animate on load
   // https://www.amcharts.com/docs/v5/concepts/animations/
   chart.appear(1000, 100);
-
+ 
 }); // end am5.ready()
 
+
+let data2 = [];
 
 
 
