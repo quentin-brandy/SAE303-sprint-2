@@ -97,20 +97,12 @@ let personnes = [
   "VEILLON Pascal",
 ];
 
-V.init = function () {
-  let semestre = document.querySelector("#semestre");
-  semestre.addEventListener("change", handlersemestre)
-}
-
-
-
-let C = {};
-C.init = function () {
-
-}
-
-let all = MmiAll;
 var data = [];
+let data2 = [];
+
+
+let renderhours = function(){
+let all = MmiAll;
 let test = {};
 let calcCM, calcTD, calcTP, calcOther, calcTotal;
 for (let intervenant of personnes) {
@@ -146,8 +138,7 @@ for (let intervenant of personnes) {
   };
   data.push(a);
 }
-
-
+}
 
 
 
@@ -170,7 +161,7 @@ function hourEnd(para) {
   return test;
 }
 
-
+renderhours();
 
 
 
@@ -286,6 +277,7 @@ function hourEnd(para) {
     let semestre = document.querySelector("#semestre");
   
     let handlersemestre = function (ev) {
+    
       let all = MmiAll;
       let test = {};
       let calcCM, calcTD, calcTP, calcOther, calcTotal;
@@ -296,7 +288,32 @@ function hourEnd(para) {
         calcTP = 0;
         calcOther = 0;
         test[intervenant] = all.filter((event) => { return event.title.includes(intervenant) })
-    
+        if(ev.target.value === "0"){
+          for (const event of test[intervenant]) {
+              if (event.type == "CM") {
+                calcCM += hourEnd(event) - hourStart(event);
+              }
+              else if (event.type == "TD") {
+                calcTD += hourEnd(event) - hourStart(event);
+              }
+              else if (event.type == "TP") {
+                calcTP += hourEnd(event) - hourStart(event);
+              }
+              else {
+                calcOther += hourEnd(event) - hourStart(event);
+              }
+      
+              calcTotal = calcCM + calcTD + calcTP + calcOther;
+          }
+          let a = {
+            "intervenant": intervenant,
+            "CM": calcCM,
+            "TD": calcTD,
+            "TP": calcTP,
+          };
+          data2.push(a);
+        }
+      else{
         for (const event of test[intervenant]) {
           if (ev.target.value === event.semestre[0]) {
         
@@ -324,7 +341,7 @@ function hourEnd(para) {
           "TP": calcTP,
         };
         data2.push(a);
-    
+      }
       }
      
       affichageserie(data2);
@@ -349,6 +366,7 @@ function hourEnd(para) {
 
     legend.data.push(series);
   }
+  
 
   makeSeries("CM", "CM");
   makeSeries("TD", "TD");
@@ -361,11 +379,9 @@ function hourEnd(para) {
 }); // end am5.ready()
 
 
-let data2 = [];
 
 
 
 
 
-C.init();
-V.init();
+
