@@ -448,3 +448,45 @@ let data2 = [];
 
 /* C.init();
 V.init(); */
+
+
+
+
+let test2 = {};
+for (let intervenant of personnes) {
+  test2[intervenant] = {};
+  let profevent = all.filter((event) => {
+    return event.title.includes(intervenant);
+  });
+
+  for (let i = 1; i <= 6; i++) {
+    let semestreEvents = profevent.filter((event) => {
+      return event.semestre.includes(i.toString());
+    });
+    test2[intervenant]["semestre" + i] = {};
+
+    let ressources = [...new Set(semestreEvents.map(event => event.ressource))];
+    console.log(ressources);
+    for (let res of ressources) {
+      let ressourceEvents = semestreEvents.filter((event) => {
+        return event.ressource === res;
+      });
+      test2[intervenant]["semestre" + i][res] = {
+        "OTHER": ressourceEvents.filter((event) => {
+          return event.type.includes("OTHER");
+        }),
+        "CM": ressourceEvents.filter((event) => {
+          return event.type.includes("CM");
+        }),
+        "TD": ressourceEvents.filter((event) => {
+          return event.type.includes("TD");
+        }),
+        "TP": ressourceEvents.filter((event) => {
+          return event.type.includes("TP");
+        })
+      };
+      console.log(test2);
+    }
+  }
+}
+
