@@ -20,15 +20,24 @@ class Event {
         this.#end = new Date(end);
         this.#location = location;
 
-        this.#groups = summary.slice(summary.lastIndexOf(',')+1);
+        this.#groups = summary.slice(summary.lastIndexOf(',') + 1);
         this.#groups = this.#groups.split('.');
-        this.#groups = this.#groups.map( gr => gr.replace(/\s/g, "") );
+        this.#groups = this.#groups.map(gr => gr.replace(/\s/g, ""));
 
 
         this.#semestre = summary.match(/[1-6]/);
 
 
         this.#ressource = summary.match(/^(R|(SA))[EÉ ]{0,2}[1-6](\.Crea)?(\.DWeb-DI)?\.[0-9]{2}/);
+
+        if (this.#ressource && this.#ressource.length > 0) {
+            const premierElement = this.#ressource[0];
+            
+            this.#ressource = premierElement;
+        } 
+        else {
+            this.#ressource = "special";
+        }
 
 
         if (this.#summary.includes("CM")) {
@@ -40,7 +49,7 @@ class Event {
         } else {
             this.#type = "OTHER";
         }
-     
+
     }
 
     get id() {
@@ -68,7 +77,7 @@ class Event {
     }
 
     get groups() {
-        return this.#groups.map( gr => gr); // retourne une copie du tableau
+        return this.#groups.map(gr => gr); // retourne une copie du tableau
     }
 
     // retourne un objet contenant les informations de l'événement
@@ -89,4 +98,4 @@ class Event {
     }
 }
 
-export {Event};
+export { Event };

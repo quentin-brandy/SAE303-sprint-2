@@ -151,119 +151,44 @@ for (let intervenant of personnes) {
 }
 
 
-/* let ressource = {
-  "intervenant": "test",
-  "Semestre": {
-    "1": {
-      "R9.08": {
-        "CM": "test",
-        "TP": "test",
-        "TS": "test",
-      },
-      "R08": {
-        "CM": "test",
-        "TP": "test",
-        "TS": "test",
-      },
-      "R908": {
-        "CM": "test",
-        "TP": "test",
-        "TS": "test",
-      },
-    },
-    "2": {
-      "R9.08": {
-        "CM": "test",
-        "TP": "test",
-        "TS": "test",
-      },
-      "R08": {
-        "CM": "test",
-        "TP": "test",
-        "TS": "test",
-      },
-      "R908": {
-        "CM": "test",
-        "TP": "test",
-        "TS": "test",
-      },
-    },
-    "3": {
-      "R9.08": {
-        "CM": "test",
-        "TP": "test",
-        "TS": "test",
-      },
-      "R08": {
-        "CM": "test",
-        "TP": "test",
-        "TS": "test",
-      },
-      "R908": {
-        "CM": "test",
-        "TP": "test",
-        "TS": "test",
-      },
-    },
-  },
-}; */
 
-let ressourceInter = [];
-let sem1, sem2, sem3, sem4, sem5, sem6;
-
+let test2 = {};
 for (let intervenant of personnes) {
-  test[intervenant] = all.filter((event) => { return event.title.includes(intervenant) })
+  test2[intervenant] = {};
+  let profevent = all.filter((event) => {
+    return event.title.includes(intervenant);
+  });
 
-  for (const event of test[intervenant]) {
-
-    if (event.type == "CM") {
-      calcCM += hourEnd(event) - hourStart(event);
-    }
-    else if (event.type == "TD") {
-      calcTD += hourEnd(event) - hourStart(event);
-    }
-    else if (event.type == "TP") {
-      calcTP += hourEnd(event) - hourStart(event);
-    }
-    else {
-      calcOther += hourEnd(event) - hourStart(event);
-    }
-
-    calcTotal = calcCM + calcTD + calcTP + calcOther;
-
-    sem1 = test[intervenant].filter((ev) => {
-      // Utilisez la condition pour filtrer les éléments
-      return ev.semestre.includes("1");
-    }).map((ev) => {
-      // Retournez la propriété souhaitée (ev.ressource)
-      return ev.ressource;
+  for (let i = 1; i <= 6; i++) {
+    let semestreEvents = profevent.filter((event) => {
+      return event.semestre.includes(i.toString());
     });
-    sem2 = test[intervenant].filter((ev) => { return ev.semestre.includes("2") })
-    sem3 = test[intervenant].filter((ev) => { return ev.semestre.includes("3") })
-    sem4 = test[intervenant].filter((ev) => { return ev.semestre.includes("4") })
-    sem5 = test[intervenant].filter((ev) => { return ev.semestre.includes("5") })
-    sem6 = test[intervenant].filter((ev) => { return ev.semestre.includes("6") })
+    test2[intervenant]["semestre" + i] = {};
 
-  }
-  let a = {
-    "intervenant": intervenant,
-
-    "Semestre": {
-      sem1,
-      sem2,
-      sem3,
-      sem4,
-      sem5,
-      sem6,
+    let ressources = [...new Set(semestreEvents.map(event => event.ressource))];
+    
+    for (let res of ressources) {
+      let ressourceEvents = semestreEvents.filter((event) => {
+        return event.ressource === res;
+      });
+      test2[intervenant]["semestre" + i][res] = {
+        "OTHER": ressourceEvents.filter((event) => {
+          return event.type.includes("OTHER");
+        }),
+        "CM": ressourceEvents.filter((event) => {
+          return event.type.includes("CM");
+        }),
+        "TD": ressourceEvents.filter((event) => {
+          return event.type.includes("TD");
+        }),
+        "TP": ressourceEvents.filter((event) => {
+          return event.type.includes("TP");
+        })
+      };
+      console.log(test2);
     }
-  };
-  console.log(a);
+  }
 }
-console.log(sem1);
-
-
-
-
 
 
 function hourStart(para) {
