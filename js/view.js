@@ -32,5 +32,30 @@ V.colorMap = {
   "mmi3": {CM: "#8ACDD7", TD: "#63939A", TP: "#3F5E63", OTHER: "#8ACDD7"}
 }
 
+V.hourStart = function(para) {
+  let heure = para.start.toString();
+  let test = heure.slice(16, -42);
+  test = test.replaceAll(":", ".");
+  test = test.replaceAll("30", "50");
+  test = parseFloat(test);
+  return test;
+};
 
+V.hourEnd = function(para) {
+  let heure = para.end.toString();
+  let test = heure.slice(16, -42);
+  test = test.replaceAll(":", ".");
+  test = test.replaceAll("30", "50");
+  test = parseFloat(test);
+  return test;
+}
+V.addoption = function(personnes){
+  let selectElement = document.getElementById("intervenant");
+personnes.forEach(personne => {
+  let option = document.createElement("option");
+  option.value = personne;
+  option.text = personne;
+  selectElement.appendChild(option);
+});
+}
 export { V };

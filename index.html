@@ -12,8 +12,11 @@
 <body>
 
   <div id="chartdiv"></div>
-  <div class="select">
+  <select name="intervenant" id="intervenant"></select>
+<div id="chartdiv2"></div>
+<div class="select">
   <select class="semestre" name="semestre" id="semestre">
+    <option value="0">Tout les semestres</option>
     <option value="1">Semestre 1</option>
     <option value="2">Semestre 2</option>
     <option value="3">Semestre 3</option>
@@ -22,10 +25,15 @@
     <option value="6">Semestre 6</option>
   </select>
 </div>
+
   <!-- Resources -->
   <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
   <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
   <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/locales/de_DE.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/geodata/germanyLow.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/fonts/notosans-sc.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/hierarchy.js"></script>
   <script type="module" src="/main.js"></script>
 
 </body>

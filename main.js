@@ -92,19 +92,9 @@ let personnes = [
   "VEILLON Pascal",
 ];
 
-let semes = [
-  "1",
-  "2",
-  "3",
-  "4",
-  "5",
-];
 
-/* V.init = function () {
-  let semestre = document.querySelector("#semestre");
-  semestre.addEventListener("change", handlersemestre)
-} */
-
+// itération 3 select
+V.addoption(personnes);
 
 
 let C = {};
@@ -112,130 +102,110 @@ C.init = function () {
 
 }
 
-let all = MmiAll;
-var data = [];
-let test = {};
-let calcCM, calcTD, calcTP, calcOther, calcTotal;
+
+let data2 = [];
+let prof = {};
+let all = MmiAll; 
 for (let intervenant of personnes) {
-  calcTotal = 0;
-  calcCM = 0;
-  calcTD = 0;
-  calcTP = 0;
-  calcOther = 0;
-  test[intervenant] = all.filter((event) => { return event.title.includes(intervenant) })
-
-  for (const event of test[intervenant]) {
-
-    if (event.type == "CM") {
-      calcCM += hourEnd(event) - hourStart(event);
-    }
-    else if (event.type == "TD") {
-      calcTD += hourEnd(event) - hourStart(event);
-    }
-    else if (event.type == "TP") {
-      calcTP += hourEnd(event) - hourStart(event);
-    }
-    else {
-      calcOther += hourEnd(event) - hourStart(event);
-    }
-
-    calcTotal = calcCM + calcTD + calcTP + calcOther;
-  }
-  let a = {
-    "intervenant": intervenant,
-    "CM": calcCM,
-    "TD": calcTD,
-    "TP": calcTP,
-  };
-  data.push(a);
+   prof[intervenant] = all.filter((event) => { return event.title.includes(intervenant) })
 }
 
 
 
-let test2 = {};
-for (let intervenant of personnes) {
-  test2[intervenant] = {};
+let allintervenant = function(ev) {
+  let test2 = [];
   let profevent = all.filter((event) => {
-    return event.title.includes(intervenant);
+    return event.title.includes(ev);
   });
-
+console.log(profevent);
+  let intervenantData = {
+    name: ev,
+    children: []
+  };
   for (let i = 1; i <= 6; i++) {
     let semestreEvents = profevent.filter((event) => {
       return event.semestre.includes(i.toString());
     });
-    test2[intervenant]["semestre" + i] = {};
 
-    let ressources = [...new Set(semestreEvents.map(event => event.ressource))];
-    
+    let semestreData = {
+      name: "semestre" + i,
+      children: []
+    };
+
+    let ressources = [];
+    semestreEvents.forEach(event => {
+      if (ressources.indexOf(event.ressource) === -1) {
+        ressources.push(event.ressource);
+      }
+    });
+   
     for (let res of ressources) {
+      let calcCM = 0;
+      let calcTD = 0;
+      let calcTP = 0;
+      let calcOther = 0;
       let ressourceEvents = semestreEvents.filter((event) => {
         return event.ressource === res;
       });
-      test2[intervenant]["semestre" + i][res] = {
-        "OTHER": ressourceEvents.filter((event) => {
-          return event.type.includes("OTHER");
-        }),
-        "CM": ressourceEvents.filter((event) => {
-          return event.type.includes("CM");
-        }),
-        "TD": ressourceEvents.filter((event) => {
-          return event.type.includes("TD");
-        }),
-        "TP": ressourceEvents.filter((event) => {
-          return event.type.includes("TP");
-        })
+      for (const event of ressourceEvents) {
+        
+        if (event.type == "CM") {
+          calcCM += V.hourEnd(event) - V.hourStart(event);
+        }
+        else if (event.type == "TD") {
+          calcTD += V.hourEnd(event) - V.hourStart(event);
+        }
+        else if (event.type == "TP") {
+          calcTP += V.hourEnd(event) - V.hourStart(event);
+        }
+        else if (event.type == "OTHER") {
+          calcOther += V.hourEnd(event) - V.hourStart(event);
+        }
+      
+      }
+      let ressourceData = {
+        name: res,
+        children: [
+          {
+            name: "CM",
+            value: calcCM
+          },
+          {
+            name: "TD",
+            value:  calcTD
+          },
+          {
+            name: "TP",
+            value:  calcTP
+          },
+          {
+            name: "OTHER",
+            value:  calcOther
+          },
+        ]
       };
-      console.log(test2);
+
+      semestreData.children.push(ressourceData);
     }
+
+    intervenantData.children.push(semestreData);
   }
-}
 
-
-function hourStart(para) {
-  let heure = para.start.toString();
-  let test = heure.slice(16, -42);
-  test = test.replaceAll(":", ".");
-  test = test.replaceAll("30", "50");
-  test = parseFloat(test);
-  return test;
-}
-function hourEnd(para) {
-  let heure = para.end.toString();
-  let test = heure.slice(16, -42);
-  test = test.replaceAll(":", ".");
-  test = test.replaceAll("30", "50");
-  test = parseFloat(test);
-  return test;
+  test2.push(intervenantData);
+  console.log(test2);  
+  return test2;
 }
 
 
 
 
 
-am5.ready(function () {
+// itération 2
 
-
-  // Create root element
-  // https://www.amcharts.com/docs/v5/getting-started/#Root_element
-  var root = am5.Root.new("chartdiv");
-
-
-  var myTheme = am5.Theme.new(root);
-
-  myTheme.rule("Grid", ["base"]).setAll({
-    strokeOpacity: 0.1
-  });
-
-
-  // Set themes
-  // https://www.amcharts.com/docs/v5/concepts/themes/
-  root.setThemes([
-    am5themes_Animated.new(root),
-    myTheme
-  ]);
-
+am5.ready(function() {
 
   // Create chart
+  var root = am5.Root.new("chartdiv2");
   // https://www.amcharts.com/docs/v5/charts/xy-chart/
   var chart = root.container.children.push(am5xy.XYChart.new(root, {
     panX: false,
@@ -245,19 +215,19 @@ am5.ready(function () {
     paddingLeft: 0,
     layout: root.verticalLayout,
   }));
-
-  /*chart.plotContainer.get("background").setAll({
-    stroke: am5.color(0x297373),
-    strokeOpacity: 0.5,                               modificateur de couleur background
-    fill: am5.color(0x297373),
-    fillOpacity: 0.2
-  });*/
+  
+  chart.plotContainer.get("background").setAll({       
+    stroke: am5.color("#2C3E50"),
+    strokeOpacityOpacity: 1,                     
+    fill: am5.color("#2C3E50"),
+    fillOpacity: 1
+  });
 
 
   // Add scrollbar
   // https://www.amcharts.com/docs/v5/charts/xy-chart/scrollbars/
   chart.set("scrollbarY", am5.Scrollbar.new(root, {
-    orientation: "vertical"
+    orientation: "vertical",
   }));
 
 
@@ -275,10 +245,12 @@ am5.ready(function () {
   yRenderer.grid.template.setAll({
     location: 1
   })
+  let affichageYaxis = function(data){
+    yAxis.data.setAll(data);
+  };
+  
 
-  yAxis.data.setAll(data);
-
-
+  
   var xAxis = chart.xAxes.push(am5xy.ValueAxis.new(root, {
     min: 0,
     maxPrecision: 0,
@@ -295,7 +267,11 @@ am5.ready(function () {
     x: am5.p50
   }));
 
-
+  chart.get("colors").set("colors", [
+    am5.color("#E74C3C"),
+    am5.color("#5dade2"),
+    am5.color("#2a84bf"),
+  ]);
   // Add series
   // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
   function makeSeries(name, fieldName) {
@@ -313,46 +289,59 @@ am5.ready(function () {
       tooltipText: "{name}, {categoryY}: {valueX}",
       tooltipY: am5.percent(10)
     });
-    series.data.setAll(data);
-    let affichageserie = function (data) {
+    let affichageserie = function(data){
       series.data.setAll(data);
     };
     // Make stuff animate on load
     // https://www.amcharts.com/docs/v5/concepts/animations/
 
-
+    
+// itération 2
     let semestre = document.querySelector("#semestre");
-
     let handlersemestre = function (ev) {
-      let all = MmiAll;
-      let test = {};
-      let calcCM, calcTD, calcTP, calcOther, calcTotal;
       for (let intervenant of personnes) {
-        calcTotal = 0;
-        calcCM = 0;
-        calcTD = 0;
-        calcTP = 0;
-        calcOther = 0;
-        test[intervenant] = all.filter((event) => { return event.title.includes(intervenant) })
-
-        for (const event of test[intervenant]) {
+        let calcCM = 0;
+        let calcTD = 0;
+        let calcTP = 0;
+        let calcOther = 0;
+        if(ev.target.value === "0"){
+          for (const event of prof[intervenant]) {
+              if (event.type == "CM") {
+                calcCM += V.hourEnd(event) - V.hourStart(event);
+              }
+              else if (event.type == "TD") {
+                calcTD += V.hourEnd(event) - V.hourStart(event);
+              }
+              else if (event.type == "TP") {
+                calcTP += V.hourEnd(event) - V.hourStart(event);
+              }
+              else {
+                calcOther += V.hourEnd(event) - V.hourStart(event);
+              }
+          }
+          let a = {
+            "intervenant": intervenant,
+            "CM": calcCM,
+            "TD": calcTD,
+            "TP": calcTP,
+          };
+          data2.push(a);
+        }
+      else{
+        for (const event of prof[intervenant]) {
           if (ev.target.value === event.semestre[0]) {
-
-
             if (event.type == "CM") {
-              calcCM += hourEnd(event) - hourStart(event);
+              calcCM += V.hourEnd(event) - V.hourStart(event);
             }
             else if (event.type == "TD") {
-              calcTD += hourEnd(event) - hourStart(event);
+              calcTD += V.hourEnd(event) - V.hourStart(event);
             }
             else if (event.type == "TP") {
-              calcTP += hourEnd(event) - hourStart(event);
+              calcTP += V.hourEnd(event) - V.hourStart(event);
             }
             else {
-              calcOther += hourEnd(event) - hourStart(event);
+              calcOther += V.hourEnd(event) - V.hourStart(event);
             }
-
-            calcTotal = calcCM + calcTD + calcTP + calcOther;
           }
         }
         let a = {
@@ -362,21 +351,21 @@ am5.ready(function () {
           "TP": calcTP,
         };
         data2.push(a);
-
       }
-
-      affichageserie(data2);
+      }
+     console.log(data2)
+     affichageserie(data2);
+     affichageYaxis(data2);
       data2 = [];
     }
     semestre.addEventListener("change", handlersemestre);
-
+    handlersemestre({ target: { value: "0" } })
 
     series.appear();
 
     series.bullets.push(function () {
       return am5.Bullet.new(root, {
         sprite: am5.Label.new(root, {
-          text: "{valueX}",
           fill: root.interfaceColors.get("alternativeText"),
           centerY: am5.p50,
           centerX: am5.p50,
@@ -387,23 +376,94 @@ am5.ready(function () {
 
     legend.data.push(series);
   }
+  
 
   makeSeries("CM", "CM");
   makeSeries("TD", "TD");
   makeSeries("TP", "TP");
 
-  // Make stuff animate on load
-  // https://www.amcharts.com/docs/v5/concepts/animations/
-  chart.appear(1000, 100);
+
+
+
+// itération 3
+
+
+
+
+// Create root element
+// https://www.amcharts.com/docs/v5/getting-started/#Root_element
+var root = am5.Root.new("chartdiv");
+
+var myTheme = am5.Theme.new(root);
+
+myTheme.rule("ColorSet").set("colors", [
+  am5.color("#57d6df"),
+  am5.color("#385f88"),
+  am5.color("#304557"),
+  am5.color("#f4b044"),
+  am5.color("#f16229"),
+  am5.color("#E91E63"),
+  am5.color("#795548"),
+]);
+// Set themes
+// https://www.amcharts.com/docs/v5/concepts/themes/
+root.setThemes([
+  am5themes_Animated.new(root),
+  myTheme
+]);
+
+// Create wrapper container
+var container = root.container.children.push(am5.Container.new(root, {
+  width: am5.percent(100),
+  height: am5.percent(100),
+  layout: root.verticalLayout
+}));
+
+
+// Create series
+// https://www.amcharts.com/docs/v5/charts/hierarchy/#Adding
+var series = container.children.push(am5hierarchy.Sunburst.new(root, {
+  singleBranchOnly: true,
+  downDepth: 10,
+  initialDepth: 10,
+  valueField: "value",
+  categoryField: "name",
+  childDataField: "children"
+}));
+
+
+// Generate and set data
+// https://www.amcharts.com/docs/v5/charts/hierarchy/#Setting_data
+
+
+
+
+let intervenant = document.querySelector("#intervenant");
+let handlerintervenant = function(ev){
+  let intervenant = ev.target.value;
+  let cours = allintervenant(intervenant);
+  affichagedonut(cours);    
+}
+intervenant.addEventListener("change", handlerintervenant);
+
+
+let affichagedonut = function(data){
+  series.data.setAll(data);
+};
+
+handlerintervenant({ target: { value: "MOUTAT Audrey" } });
+
+series.set("selectedDataItem", series.dataItems[0]);
+
+container.children.unshift(
+  am5hierarchy.BreadcrumbBar.new(root, {
+    series: series
+  })
+);
+
+
+
+// Make stuff animate on load
+series.appear(1000, 100);
 
 }); // end am5.ready()
-
-
-let data2 = [];
-
-
-
-
-
-/* C.init();
-V.init(); */
