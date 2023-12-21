@@ -513,7 +513,7 @@ var serieheatmap = chart.series.push(am5xy.ColumnSeries.new(root, {
   yAxis: yAxisheatmap,
   categoryXField: "weekday",
   categoryYField: "hour",
-  valueField: "value"
+  valueField: "value",
 }));
 
 serieheatmap.columns.template.setAll({
@@ -554,7 +554,7 @@ serieheatmap.set("heatRules", [{
 var heatLegend = chart.bottomAxesContainer.children.push(am5.HeatLegend.new(root, {
   orientation: "horizontal",
   endColor: am5.color(0xfffb77),
-  startColor: am5.color(0xfe131a)
+  startColor: am5.color(0xfe131a),
 }));
 
 // itération 4
@@ -562,6 +562,13 @@ var heatLegend = chart.bottomAxesContainer.children.push(am5.HeatLegend.new(root
 let dataheatmap = [];
 
 let handlerheatmap = function(ev) {
+  let joursEnFrancais = {
+    "Mon": "Lundi",
+    "Tue": "Mardi",
+    "Wed": "Mercredi",
+    "Thu": "Jeudi",
+    "Fri": "Vendredi"
+  };
   let intervenant = ev.target.value; 
 
   let filteredEvents = allevent.filter((event) => {
@@ -592,14 +599,19 @@ let handlerheatmap = function(ev) {
         let heurefinal = `${heure}h`;
 
         if (!totalheure[jour][heurefinal]) {
-          totalheure[jour][heurefinal] = { hour: heurefinal, weekday: jour, value: 0 };
+          totalheure[jour][heurefinal] = { hour: heurefinal, weekday: joursEnFrancais[jour], value: 0 };
         }
 
-        totalheure[jour][heurefinal].value += intersection;
+       
+          totalheure[jour][heurefinal].value += intersection;
+      
       }
+     
     });
 
-    dataheatmap = dataheatmap.concat(Object.values(totalheure[jour]));
+    let entriesWithNonZeroValue = Object.values(totalheure[jour]).filter(entry => entry.value !== 0);
+    dataheatmap = dataheatmap.concat(entriesWithNonZeroValue);
+
 
   });
   affichageheatmap(dataheatmap);
@@ -617,11 +629,11 @@ let affichageheatmap = function(data){
 };
 handlerheatmap({ target: { value: "MOUTAT Audrey" } });
 xAxis.data.setAll([
-  { weekday: "Mon" },
-  { weekday: "Tue" },
-  { weekday: "Wed" },
-  { weekday: "Thu" },
-  { weekday: "Fri" },
+  { weekday: "Lundi" },
+  { weekday: "Mardi" },
+  { weekday: "Mercredi" },
+  { weekday: "Jeudi" },
+  { weekday: "Vendredi" },
 ]);
 
 yAxisheatmap.data.setAll([
