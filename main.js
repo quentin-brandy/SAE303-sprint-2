@@ -32,10 +32,6 @@ for (const elt of MmiAll) {
 }
 
 
-let Mmi1 = [];
-let Mmi2 = [];
-let Mmi3 = [];
-
 
 
 let personnes = [
@@ -97,33 +93,27 @@ let personnes = [
 V.addoption(personnes);
 
 
-let C = {};
-C.init = function () {
-
-}
-
-
-let data2 = [];
+let dataintervenantheure = [];
 let prof = {};
-let all = MmiAll; 
+let allevent = MmiAll; 
 for (let intervenant of personnes) {
-   prof[intervenant] = all.filter((event) => { return event.title.includes(intervenant) })
+   prof[intervenant] = allevent.filter((event) => { return event.title.includes(intervenant) })
 }
 
 
 
-let allintervenant = function(ev) {
-  let test2 = [];
-  let profevent = all.filter((event) => {
-    return event.title.includes(ev);
+let allintervenant = function(intervenant) {
+  let sunburstdata = [];
+  let intervenantevent = allevent.filter((event) => {
+    return event.title.includes(intervenant);
   });
-console.log(profevent);
+console.log(intervenantevent);
   let intervenantData = {
-    name: ev,
+    name: intervenant,
     children: []
   };
   for (let i = 1; i <= 6; i++) {
-    let semestreEvents = profevent.filter((event) => {
+    let semestreEvents = intervenantevent.filter((event) => {
       return event.semestre.includes(i.toString());
     });
 
@@ -191,9 +181,9 @@ console.log(profevent);
     intervenantData.children.push(semestreData);
   }
 
-  test2.push(intervenantData);
-  console.log(test2);  
-  return test2;
+  sunburstdata.push(intervenantData);
+  console.log(sunburstdata);  
+  return sunburstdata;
 }
 
 
@@ -325,7 +315,7 @@ am5.ready(function() {
             "TD": calcTD,
             "TP": calcTP,
           };
-          data2.push(a);
+          dataintervenantheure.push(a);
         }
       else{
         for (const event of prof[intervenant]) {
@@ -350,13 +340,13 @@ am5.ready(function() {
           "TD": calcTD,
           "TP": calcTP,
         };
-        data2.push(a);
+        dataintervenantheure.push(a);
       }
       }
-     console.log(data2)
-     affichageserie(data2);
-     affichageYaxis(data2);
-      data2 = [];
+     console.log(dataintervenantheure)
+     affichageserie(dataintervenantheure);
+     affichageYaxis(dataintervenantheure);
+      dataintervenantheure = [];
     }
     semestre.addEventListener("change", handlersemestre);
     handlersemestre({ target: { value: "0" } })
@@ -434,7 +424,7 @@ var series = container.children.push(am5hierarchy.Sunburst.new(root, {
 // https://www.amcharts.com/docs/v5/charts/hierarchy/#Setting_data
 
 
-
+// itération 3
 
 let intervenant = document.querySelector("#intervenant");
 let handlerintervenant = function(ev){
@@ -442,7 +432,6 @@ let handlerintervenant = function(ev){
   let cours = allintervenant(intervenant);
   affichagedonut(cours);    
 }
-intervenant.addEventListener("change", handlerintervenant);
 
 
 let affichagedonut = function(data){
@@ -460,18 +449,9 @@ container.children.unshift(
 );
 
 
-
-
-
 // itération 4
 
-
-
-
-
 var root = am5.Root.new("chartdiv3");
-
-
 
 // Set themes
 // https://www.amcharts.com/docs/v5/concepts/themes/
@@ -502,7 +482,7 @@ var yRenderer = am5xy.AxisRendererY.new(root, {
 
 yRenderer.grid.template.set("visible", false);
 
-var yAxis = chart.yAxes.push(am5xy.CategoryAxis.new(root, {
+var yAxisheatmap = chart.yAxes.push(am5xy.CategoryAxis.new(root, {
   maxDeviation: 0,
   renderer: yRenderer,
   categoryField: "hour"
@@ -525,18 +505,18 @@ var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
 
 // Create series
 // https://www.amcharts.com/docs/v5/charts/xy-chart/#Adding_series
-var series = chart.series.push(am5xy.ColumnSeries.new(root, {
+var serieheatmap = chart.series.push(am5xy.ColumnSeries.new(root, {
   calculateAggregates: true,
   stroke: am5.color(0xffffff),
   clustered: false,
   xAxis: xAxis,
-  yAxis: yAxis,
+  yAxis: yAxisheatmap,
   categoryXField: "weekday",
   categoryYField: "hour",
   valueField: "value"
 }));
 
-series.columns.template.setAll({
+serieheatmap.columns.template.setAll({
   tooltipText: "{value}",
   strokeOpacity: 1,
   strokeWidth: 2,
@@ -544,27 +524,28 @@ series.columns.template.setAll({
   height: am5.percent(100)
 });
 
-series.columns.template.events.on("pointerover", function(event) {
+serieheatmap.columns.template.events.on("pointerover", function(event) {
   var di = event.target.dataItem;
   if (di) {
-    heatLegend.showValue(di.get("value", 1));
+    heatLegend.showValue(di.get("value", 0));
   }
 });
 
-series.events.on("datavalidated", function() {
-  heatLegend.set("startValue", series.getPrivate("valueHigh"));
-  heatLegend.set("endValue", series.getPrivate("valueLow"));
+serieheatmap.events.on("datavalidated", function() {
+  heatLegend.set("startValue", serieheatmap.getPrivate("valueHigh"));
+  heatLegend.set("endValue", serieheatmap.getPrivate("valueLow"));
 });
+
 
 
 // Set up heat rules
 // https://www.amcharts.com/docs/v5/concepts/settings/heat-rules/
-series.set("heatRules", [{
-  target: series.columns.template,
+serieheatmap.set("heatRules", [{
+  target: serieheatmap.columns.template,
   min: am5.color(0xfffb77),
   max: am5.color(0xfe131a),
   dataField: "value",
-  key: "fill"
+  key: "fill",
 }]);
 
 
@@ -576,102 +557,65 @@ var heatLegend = chart.bottomAxesContainer.children.push(am5.HeatLegend.new(root
   startColor: am5.color(0xfe131a)
 }));
 
-let intersectByHour = function (hour, start, end) {
+// itération 4
 
-  let interStart = new Date(start);
-  interStart.setHours(hour);
-  interStart.setMinutes(0);
-  let interEnd = new Date(end);
-  interEnd.setHours(hour + 1);
-  interEnd.setMinutes(0);
-
-  // maintenant il faut déterminer s'il existe une intersection entre [interStart, interEnd] et les horaires du cours [start, end]
-
-  if (interEnd <= start) // si l'heure de fin est avant l'heure de début du cours, pas d'intersection
-    return 0;
-  else if (interStart >= end) // si l'heure de début est après l'heure de fin du cours, pas d'intersection
-    return 0;
-  else { // il existe une intersection entre [interStart, interEnd] et les horaires du cours [start, end]
-    return (Math.min(interEnd, end) - Math.max(interStart, start)) / 1000 / 3600;
-    // on prend le minimum des deux heures de fin et le maximum des deux heures de début
-    // et on retourne la durée de l'intersection en heures
-  }
-
-}
-
-
-
-
-
-
-let data4 = [];
+let dataheatmap = [];
 
 let handlerheatmap = function(ev) {
-  let intervenant = ev.target.value; // Récupérer la valeur du filtre
+  let intervenant = ev.target.value; 
 
-  // Filtrer les événements avec l'intervenant spécifié
-  let filteredEvents = all.filter((event) => {
+  let filteredEvents = allevent.filter((event) => {
     return event.title.includes(intervenant);
   });
 
-  function getDayFromDate(date) {
+  function getdayfromdate(date) {
     let jours = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-    return jours[date.getDay()];
+    let dayIndex = date.getDay() - 1;
+    return jours[dayIndex];
   }
 
-  // Utiliser un objet temporaire pour stocker les valeurs cumulées par jour avant de les ajouter à data
   let totalheure = {};
 
-  // Parcourir chaque jour de la semaine
   let joursemaine = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri',];
   joursemaine.forEach(jour => {
-    totalheure[jour] = []; // Initialiser un tableau pour stocker les valeurs par heure pour ce jour
+    totalheure[jour] = []; 
 
-    // Filtrer les événements pour cet intervenant par jour
     let eventjour = filteredEvents.filter(event => {
-      const eventDay = getDayFromDate(event.start);
+      const eventDay = getdayfromdate(event.start);
       return eventDay === jour;
     });
 
-    // Calculer les heures pour chaque événement et chaque heure
     eventjour.forEach(event => {
       for (let heure = 0; heure < 24; heure++) {
-        let intersection = intersectByHour(heure, event.start, event.end);
+        let intersection = V.intersectByHour(heure, event.start, event.end);
 
-        // Formatage de l'heure
         let heurefinal = `${heure}h`;
 
-        // Si l'heure pour ce jour n'existe pas encore dans totalheure, l'initialiser à 0
         if (!totalheure[jour][heurefinal]) {
           totalheure[jour][heurefinal] = { hour: heurefinal, weekday: jour, value: 0 };
         }
 
-        // Ajouter la valeur d'intersection à totalheure
         totalheure[jour][heurefinal].value += intersection;
       }
     });
 
-    // Ajouter les valeurs cumulées pour ce jour à data
-    data4.push(...Object.values(totalheure[jour]));
+    dataheatmap = dataheatmap.concat(Object.values(totalheure[jour]));
+
   });
-
-  // Afficher le résultat mis à jour dans la console
-  affichageheatmap(data4);
-  console.log(data4);
-  data4 = [];
+  affichageheatmap(dataheatmap);
+  console.log(dataheatmap);
+  dataheatmap = [];
 };
+intervenant.addEventListener("change", handlerintervenant);
 intervenant.addEventListener("change", handlerheatmap);
-
-
-
 
 
 // Set data
 // https://www.amcharts.com/docs/v5/charts/xy-chart/#Setting_data
 let affichageheatmap = function(data){
-  series.data.setAll(data);
+  serieheatmap.data.setAll(data);
 };
-
+handlerheatmap({ target: { value: "MOUTAT Audrey" } });
 xAxis.data.setAll([
   { weekday: "Mon" },
   { weekday: "Tue" },
@@ -680,7 +624,7 @@ xAxis.data.setAll([
   { weekday: "Fri" },
 ]);
 
-yAxis.data.setAll([
+yAxisheatmap.data.setAll([
   { hour: "8h" },
   { hour: "9h" },
   { hour: "10h" },
@@ -697,6 +641,6 @@ yAxis.data.setAll([
 
 
 // Make stuff animate on load
-series.appear(1000, 100);
+serieheatmap.appear(1000, 100);
 
 }); // end am5.ready()
