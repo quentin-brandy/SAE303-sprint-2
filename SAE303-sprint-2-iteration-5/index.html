@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Calendrier intéractif pour les élèves et les professeurs de MMI">
+  <link rel="stylesheet" href="style.css">
+  <title>Dashboard Intervenants</title>
+</head>
+
+<body>
+
+  <main class="main">
+
+    <h1 class="h1__title">Dashboard des intervenants</h1>
+    <section class="section__graph">
+  
+      <div class="select">
+        <select class="selecteur" name="semestre" id="semestre">
+          <option value="0">Tout les semestres</option>
+          <option value="1">Semestre 1</option>
+          <option value="2">Semestre 2</option>
+          <option value="3">Semestre 3</option>
+          <option value="4">Semestre 4</option>
+          <option value="5">Semestre 5</option>
+          <option value="6">Semestre 6</option>
+        </select>
+      </div>
+      <section class="section__principale">
+        <div id="chartdiv2"></div>
+      </section>
+
+    </section>
+
+    <section class="section__secondaire">
+      <select class="selecteur" name="intervenant" id="intervenant"></select>
+
+      <section class="section__graph2">
+        <div id="chartdiv"></div>
+        <div id="chartdiv3"></div>
+      </section>
+    </section>
+  </main>
+
+
+
+  <!-- Resources -->
+  <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/locales/de_DE.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/geodata/germanyLow.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/fonts/notosans-sc.js"></script>
+  <script src="https://cdn.amcharts.com/lib/5/hierarchy.js"></script>
+  <script type="module" src="/main.js"></script>
+
+</body>
+
+</html>
