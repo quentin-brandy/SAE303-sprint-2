@@ -5,11 +5,14 @@ body{
     width: 100%;
     height: 100vh;
 }
-#heatmap {
+#chartdiv2 {
     width: 100%;
     height: 100vh;
 }
-
+#chartdiv3 {
+    width: 100%;
+    height: 100vh;
+}
 .select{
     appearance: none;
     display: flex;
