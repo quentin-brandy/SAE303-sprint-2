@@ -562,7 +562,7 @@ var heatLegend = chart.bottomAxesContainer.children.push(am5.HeatLegend.new(root
 let dataheatmap = [];
 
 let handlerheatmap = function(ev) {
-  let joursEnFrancais = {
+  let joursfrancais = {
     "Mon": "Lundi",
     "Tue": "Mardi",
     "Wed": "Mercredi",
@@ -599,7 +599,7 @@ let handlerheatmap = function(ev) {
         let heurefinal = `${heure}h`;
 
         if (!totalheure[jour][heurefinal]) {
-          totalheure[jour][heurefinal] = { hour: heurefinal, weekday: joursEnFrancais[jour], value: 0 };
+          totalheure[jour][heurefinal] = { hour: heurefinal, weekday: joursfrancais[jour], value: 0 };
         }
 
        
@@ -609,8 +609,8 @@ let handlerheatmap = function(ev) {
      
     });
 
-    let entriesWithNonZeroValue = Object.values(totalheure[jour]).filter(entry => entry.value !== 0);
-    dataheatmap = dataheatmap.concat(entriesWithNonZeroValue);
+    let heuredifzero = Object.values(totalheure[jour]).filter(entry => entry.value !== 0);
+    dataheatmap = dataheatmap.concat(heuredifzero);
 
 
   });
